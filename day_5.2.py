@@ -5,31 +5,35 @@ with open(r"C:\Users\cp\Desktop\AoC-24\inputs\input_5.txt") as source:
 def middle_of_update(y,r):
     new_rules = r
     m = 0
-    for i in range(len(y)):
+    for i in range(len(y)-1):
         n = 0
-        for j in range(len(y)):
-            if i == j:
-                pass
+        for j in range(i+1,len(y)):
+            if y[i]+'|'+y[j] in new_rules:
+                n += 1
             else:
-                if i < j:
-                    if y[i]+'|'+y[j] in new_rules:
-                        n += 1
-                    else:
-                        if y[j]+'|'+y[i] not in new_rules:
-                            n += 1
-                elif i > j:
-                    if y[j]+'|'+y[i] in new_rules:
-                        n += 1
-                    else:
-                        if y[i]+'|'+y[j] not in new_rules:
-                            n += 1
-        if n == (len(y)-1):
+                if y[j]+'|'+y[i] not in new_rules:
+                    n += 1
+        if n == (len(y)-i-1):
             m += 1
-    if m == len(y):
-        return int(y[len(y)//2])
+    if m == len(y)-1:
+        return 1
     else:
         return 0
 
+
+def reorder(x,y):
+    print(x)
+    new_x = x.copy()
+    for i in range(0, len(x)-1):
+        for j in range(i,len(x)):
+            if new_x[i] + "|" + new_x[j] in y:
+                pass
+            else:
+                t = new_x[i]
+                new_x[i] = new_x[j]
+                new_x[j] = t
+    print(new_x, new_x[int((len(new_x)-1)/2)])
+    return new_x[int((len(x)-1)/2)]
 
 def sol(v):
     rules = v.split("\n\n")[0]
@@ -38,7 +42,9 @@ def sol(v):
     new_rules = rules.splitlines()
     ans = 0
     for i in new_updates:
-        ans += middle_of_update(i,new_rules)
+        if middle_of_update(i,new_rules) == 0:
+            new_i = reorder(i,new_rules)
+            ans += int(new_i)
     return ans
 
 
@@ -73,7 +79,7 @@ test = '''47|53
 
 
 def test_sol():
-    assert sol(test) == 143
+    assert sol(test) == 123
 
 
 test_sol()
